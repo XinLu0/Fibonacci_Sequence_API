@@ -1,0 +1,22 @@
+name: CD
+
+on:
+  workflow_run:
+    workflows: [CI]
+    types: [completed]
+    branches: [main]
+
+env:
+  IMAGE_NAME: ghcr.io/${{ github.repository_owner }}/fibonacci-api
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+
+    steps:
+      - name: Deploy to Kubernetes
+        run: |
+          echo "Deploying ${{ env.IMAGE_NAME }}:${{ github.sha }} to cluster"
+          # kubectl set image deployment/fibonacci-api api=${{ env.IMAGE_NAME }}:${{ github.sha }}
+          # kubectl rollout status deployment/fibonacci-api --timeout=120s
