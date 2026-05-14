@@ -6,15 +6,15 @@ on:
     types: [completed]
     branches: [main]
 
-env:
-  IMAGE_NAME: ghcr.io/${{ github.repository_owner }}/fibonacci-api
-
 jobs:
   deploy:
     runs-on: ubuntu-latest
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
 
     steps:
+      - name: Set image name
+        run: echo "IMAGE_NAME=ghcr.io/${GITHUB_REPOSITORY_OWNER,,}/fibonacci-api" >> "$GITHUB_ENV"
+
       - name: Deploy to Kubernetes
         run: |
           echo "Deploying ${{ env.IMAGE_NAME }}:${{ github.sha }} to cluster"
